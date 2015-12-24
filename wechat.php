@@ -5,12 +5,12 @@ header("Content-type: text/html; charset=utf-8");
 require './wechat/wechat.class.php';
 $options = array('token' => 'scubike', //填写你设定的key
 //'encodingaeskey'=>'encodingaeskey', //填写加密用的EncodingAESKey
-'appid' => 'wx00b13f40626ea6c5', //填写高级调用功能的app id, 请在微信开发模式后台查询
-'appsecret' => '0ab281446ed531729b72896715dd376e', //填写高级调用功能的密钥
+'appid' => 'YOUR_APPID', //填写高级调用功能的app id, 请在微信开发模式后台查询
+'appsecret' => 'YOUR_APPSECRET', //填写高级调用功能的密钥
 
 );
 $systemError = "系统错误,请稍后再试";
-$apiUrl = "http://scuinfo.com/lab/bike";
+$apiUrl = "http://1.scubiketest.sinaapp.com";
 $apiSuffix = "php";
 $w = new Wechat($options);
 
@@ -32,7 +32,7 @@ switch($type) {
 					//0.将该扫描事件写入数据库，扫描时间，用户id，
 					$postScanurl = $apiUrl . "/postScan." . $apiSuffix;
 					//写入扫描时间的api @post
-					$param = array('wechatId' => $w -> getRevFrom(), 'createAt' => $w -> getRevCtime(), 'stationId' => $w -> getRevSceneId());
+					$param = array('wechatId' => $w -> getRevFrom(), 'createAt' => $w -> getRevCtime(), 'stationId' => $w -> getRevSceneId(), 'status' => 0);
 					http_post($postScanurl, $param);
 					//1.检查数据库是否有该用户
 					$getUserinfoUrl = $apiUrl . "/getUserinfo." . $apiSuffix . "?wechatId=" . $w -> getRevFrom();
@@ -49,7 +49,7 @@ switch($type) {
 						//3.如果2的结果是有，提示：XX请在3分钟内点击下方还车按钮进行还车
 
 						if ($userLend -> status == "0") {
-							$lendtips = "尊敬的用户" . $userinfo -> info -> wechatName . ",请在3分钟内点击下方的还车按钮进行还车" . $userlend -> status;
+							$lendtips = "尊敬的用户" . $userinfo -> info -> wechatName . ",您已借车，请在3分钟内点击下方的还车按钮进行还车" . $userlend -> status;
 							$w -> text($lendtips) -> reply();
 
 						} else if ($userLend -> status == "102") {
@@ -57,7 +57,7 @@ switch($type) {
 			    $stationInfo= json_decode(http_get($getStationUrl));
 			    if($stationInfo->status=="0"){
 			    	if($stationInfo->info->number>0){
-							$returntips = "尊敬的用户" . $userinfo -> info -> wechatName . ",请在3分钟内点击下方的借车按钮进行借车";
+							$returntips = "尊敬的用户" . $userinfo -> info -> wechatName . ",已成功授权，请在3分钟内点击下方的借车按钮进行借车";
 							$w -> text($returntips) -> reply();
 							//4.如果2的结果是没有，提示：xx请点击下方借车按钮进行借车
 								}else{
@@ -132,7 +132,7 @@ switch($type) {
 					//3.如果2的结果是有，提示：XX请在3分钟内点击下方还车按钮进行还车
 
 					if ($userLend -> status == "0") {
-						$lendtips = "尊敬的用户" . $userinfo -> info -> wechatName . ",请在3分钟内点击下方的还车按钮进行还车";
+						$lendtips = "尊敬的用户" . $userinfo -> info -> wechatName . ",您已借车，请在3分钟内点击下方的还车按钮进行还车";
 						$w -> text($lendtips) -> reply();
 
 					} else if ($userLend -> status == "102") {
@@ -141,7 +141,7 @@ switch($type) {
 			    if($stationInfo->status=="0"){
 			    	if($stationInfo->info->number>0){
 
-						$returntips = "尊敬的用户" . $userinfo -> info -> wechatName . ",请在3分钟内点击下方的借车按钮进行借车";
+						$returntips = "尊敬的用户" . $userinfo -> info -> wechatName . ",已成功授权，请在3分钟内点击下方的借车按钮进行借车";
 						$w -> text($returntips) -> reply();
 			    		}else{
 					$content = "当前站点车辆不足";
@@ -211,15 +211,16 @@ switch($type) {
 								$lendtips = "尊敬的用户" . $userinfo -> info -> wechatName . ",您在" . date('m月 d日H点i分', $userLend -> info -> lendCreateAt) . "所借的公益自行车尚未归还,请先在站点扫描二维码并还车后再进行借车";
 								$w -> text($lendtips) -> reply();
 
-							} elseif ($userLend -> status == "102") {
+							} else if ($userLend -> status == "102") {
+								//存在用户且没有借车
 								//5.如果3的结果为否，（查询点击借车时间-该用户的扫描时间）>3分钟
 								$getScanUrl = $apiUrl . "/getScan." . $apiSuffix . "?wechatId=" . $w -> getRevFrom();
 								$scan = json_decode(http_get($getScanUrl));
-								if ($scan -> status == "0" && $scan -> info -> status == "0") {
+								if ($scan -> status == "0" && $scan -> info -> status == "0" ) {
 
 									//6.如果大于3分钟的话，提示：您在三分钟内未扫描二维码，请先扫描二维码再借车；
 									if ((($w -> getRevCtime() - $scan -> info -> createAt) / 60) > 3) {
-										$tips = "尊敬的用户" . $userinfo -> info -> wechatName . ",您在3分钟内未扫描站点的动态二维码,请先在站点扫描动态二维码后再进行借车";
+										$tips = "尊敬的用户" . $userinfo -> info -> wechatName . ",请先在站点扫描动态二维码后再进行借车";
 										$w -> text($tips) -> reply();
 
 									} else {
@@ -238,7 +239,7 @@ switch($type) {
 											if ($postStationBike -> status == "0") {
 
 												$putScanUrl = $apiUrl . "/putScan." . $apiSuffix;
-												$param = array("id" => $scan -> info -> id, "status" => 1, );
+												$param = array("id" => $scan ->info ->id , "status" => 1);
 												$putScan = json_decode(http_post($putScanUrl, $param));
 												if ($putScan -> status == 0) {
 													$tips = "恭喜您,用户" . $userinfo -> info -> wechatName . "借车成功";
@@ -257,7 +258,8 @@ switch($type) {
 									}
 
 								} else {
-									$tips = "尊敬的用户" . $userinfo -> info -> wechatName . ",您在3分钟内未扫描站点的动态二维码,请先在站点扫描动态二维码后再进行借车";
+                                    $tips =
+                                     "尊敬的用户" . $userinfo -> info -> wechatName . ",您在3分钟内未扫描站点的动态二维码,请先在站点扫描动态二维码后再进行借车";
 									$w -> text($tips) -> reply();
 								}
 
@@ -323,10 +325,10 @@ switch($type) {
 										//7.如果小于3分钟的话，将还车信息更新到借车表，并增加相应站点车辆，提示：您好还车成功
 
 										$putLendUrl = $apiUrl . "/putLend." . $apiSuffix;
-										$param = array("id" => $userLend -> info -> id, "returnStationId" => $scan -> info -> stationId, "returnCreateAt" => $w -> getRevCtime(), "updateCreateAt" => $w -> getRevCtime(), "status" => 1, );
+										$param = array("id" => $userLend -> info -> id, "returnStationId" => $scan -> info -> stationId, "returnCreateAt" => $w -> getRevCtime(), "updateCreateAt" => $w -> getRevCtime(), "status" => 1);
 										$putLend = json_decode(http_post($putLendUrl, $param));
 
-										if ($putLend -> status == "0") {
+										if ($putLend -> status == 0) {
 
 											$postStationBikeUrl = $apiUrl . "/postStationBike." . $apiSuffix;
 											$param = array('action' => 'add', 'number' => 1, 'stationId' => $scan -> info -> stationId);
@@ -334,21 +336,21 @@ switch($type) {
 											if ($postStationBike -> status == "0") {
 
 												$putScanUrl = $apiUrl . "/putScan." . $apiSuffix;
-												$param = array("id" => $scan -> info -> id, "status" => 1, );
+												$param = array("id" => $scan -> info -> id, "status" => 1);
 												$putScan = json_decode(http_post($putScanUrl, $param));
 												if ($putScan -> status == 0) {
 
 													$tips = "恭喜您,用户" .$userinfo -> info -> wechatName . "还车成功";
 													$w -> text($tips) -> reply();
 												} else {
-													$w -> text($systemError) -> reply();
+													$w -> text($systemError."扫描系统故障") -> reply();
 												}
 											} else {
-												$w -> text($systemError) -> reply();
+												$w -> text($systemError."站点加车故障") -> reply();
 											}
 
 										} else {
-											$w -> text($systemError) -> reply();
+											$w -> text($systemError."putLend故障") -> reply();
 										}
 
 									}

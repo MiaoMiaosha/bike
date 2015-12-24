@@ -21,14 +21,14 @@ if (isset($_POST['id']) AND isset($_POST['status'])) {
 	exit ;
 }
 
-$result = mysql_query("update `bike_scan` set status='$status' where id=$id") or die("get information failed");
-
+$result = mysql_query("update bike_scan set status=$status where id=$id") or die("get information failed");
 if (!$result) {
 	$error2 = array("status" => "103", "des" => "数据库更新出错");
 } else {
-	$result = array("status" => 0, "des" => "更新成功", );
+    	$result = array("status" => 0, "des" => "update successful!", );
 
-	echo json_encode($result);
+    echo json_encode($result);
+  
 
 }
 

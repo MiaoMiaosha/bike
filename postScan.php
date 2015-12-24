@@ -19,6 +19,7 @@ if (isset($_POST["wechatId"]) AND isset($_POST["stationId"]) AND isset($_POST["c
 	$wechatId = $_POST["wechatId"];
 	$stationId = $_POST["stationId"];
 	$createAt = $_POST["createAt"];
+	$status = $_POST["status"];
 
 } else {
 
@@ -31,7 +32,7 @@ if (isset($_POST["wechatId"]) AND isset($_POST["stationId"]) AND isset($_POST["c
 //$getId=mysql_insert_id();
 //echo $getId;
 
-$query = mysql_query("INSERT INTO `bike_scan` (id,wechatId,createAt,stationId) VALUES (null,'$wechatId','$createAt','$stationId')");
+$query = mysql_query("INSERT INTO `bike_scan` (id,wechatId,createAt,stationId,status) VALUES (null,'$wechatId','$createAt','$stationId','$status')");
 
 //mysql_query("INSERT INTO bike_scan (id,wechatId,createAt,stationId)
 //VALUES ('0','wechatId','2','1')");

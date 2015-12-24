@@ -3,12 +3,12 @@ header("Content-type: text/html; charset=utf-8");
 require './wechat/wechat.class.php';
 $options = array('token' => 'scubike', //填写你设定的key
 //'encodingaeskey'=>'encodingaeskey', //填写加密用的EncodingAESKey
-'appid' => 'wx00b13f40626ea6c5', //填写高级调用功能的app id, 请在微信开发模式后台查询
-'appsecret' => '0ab281446ed531729b72896715dd376e', //填写高级调用功能的密钥
+'appid' => 'YOUR_APPID', //填写高级调用功能的app id, 请在微信开发模式后台查询
+'appsecret' => 'YOUR_APPSECRET', //填写高级调用功能的密钥
 
 );
 $systemError = "系统错误,请稍后再试";
-$apiUrl = "http://scuinfo.com/lab/bike";
+$apiUrl = "http://1.scubiketest.sinaapp.com";
 if (isset($_GET['stationId'])) {
 	$stationId = $_GET['stationId'];
 } else {

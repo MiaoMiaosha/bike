@@ -10,7 +10,7 @@ include ("conn.php");
 
  */
 
-if (isset($_POST['id']) AND isset($_POST['returnCreateAt']) AND isset($_POST['returnStationId']) AND isset($_POST['updateCreateAt'])) {
+if (isset($_POST['id']) AND isset($_POST['returnCreateAt']) AND isset($_POST['returnStationId']) AND isset($_POST['updateCreateAt']) AND isset($_POST['status'])) {
 	$id = $_POST['id'];
 	$returnCreateAt = $_POST['returnCreateAt'];
 	$returnStationId = $_POST['returnStationId'];
@@ -24,7 +24,7 @@ if (isset($_POST['id']) AND isset($_POST['returnCreateAt']) AND isset($_POST['re
 	exit ;
 }
 
-$result = mysql_query("update `bike_lend` set returnStationId='$returnStationId',returnCreateAt='$returnCreateAt',updateCreateAt='$updateCreateAt',status='$status' where id=$id") or die("get information failed");
+$result = mysql_query("update bike_lend set returnStationId=$returnStationId,returnCreateAt=$returnCreateAt,updateCreateAt=$updateCreateAt,status=$status where id=$id") or die("get information failed");
 
 if (!$result) {
 	$error2 = array("status" => "103", "des" => "数据库更新出错");

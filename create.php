@@ -4,8 +4,8 @@
 require './wechat/wechat.class.php';
 $options = array('token' => 'scubike', //填写你设定的key
 //'encodingaeskey'=>'encodingaeskey', //填写加密用的EncodingAESKey
-'appid' => 'wx00b13f40626ea6c5', //填写高级调用功能的app id, 请在微信开发模式后台查询
-'appsecret' => '0ab281446ed531729b72896715dd376e', //填写高级调用功能的密钥
+'appid' => 'YOUR_APPID', //填写高级调用功能的app id, 请在微信开发模式后台查询
+'appsecret' => 'YOUR_APPSECRET', //填写高级调用功能的密钥
 
 );
 $w = new Wechat($options);

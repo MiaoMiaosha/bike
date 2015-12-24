@@ -1,7 +1,7 @@
 <?php
 session_start();
  include("conn.php");
-
+header("Content-Type: text/html;charset=utf-8");
  if(!empty($_POST['sub'])){
 
 $username=$_POST['username'];

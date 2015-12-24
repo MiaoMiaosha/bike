@@ -31,7 +31,7 @@ WHERE wechatId='$wechatId' ORDER BY createAt desc") or die("数据库查询出�
 $row = mysql_fetch_assoc($result);
 
 if (!$row) {
-	$error1 = array("status" => "102", "des" => "该用户还没有还车信息\n");
+	$error1 = array("status" => 102, "des" => "该用户还没有还车信息\n");
 	echo json_encode($error1);
 
 	exit ;
@@ -39,7 +39,7 @@ if (!$row) {
 
 //查询得返回值的情况
 if ($row) {
-	$result_state = array("status" => "0", "info" => $row, );
+	$result_state = array("status" => 0 , "info" => $row, );
 } else {
 	$result_state = array("status" => 103, "des" => "数据库读取失败", );
 
